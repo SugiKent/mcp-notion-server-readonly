@@ -452,34 +452,7 @@ const blockObjectSchema = {
 // TODO: If modifications are made, since the original source information is necessary, add an explanation that retrieves the raw object that has not been converted to markdown, and create a dedicated tool to convert to markdown.
 // Tool definitions
 // Blocks
-const appendBlockChildrenTool: Tool = {
-  name: "notion_append_block_children",
-  description:
-    "Append new children blocks to a specified parent block in Notion. Requires insert content capabilities. You can optionally specify the 'after' parameter to append after a certain block.",
-  inputSchema: {
-    type: "object",
-    properties: {
-      block_id: {
-        type: "string",
-        description: "The ID of the parent block." + commonIdDescription,
-      },
-      children: {
-        type: "array",
-        description:
-          "Array of block objects to append. Each block must follow the Notion block schema.",
-        items: blockObjectSchema,
-      },
-      after: {
-        type: "string",
-        description:
-          "The ID of the existing block that the new block should be appended after." +
-          commonIdDescription,
-      },
-      format: formatParameter,
-    },
-    required: ["block_id", "children"],
-  },
-};
+
 
 const retrieveBlockTool: Tool = {
   name: "notion_retrieve_block",
@@ -521,41 +494,9 @@ const retrieveBlockChildrenTool: Tool = {
   },
 };
 
-const deleteBlockTool: Tool = {
-  name: "notion_delete_block",
-  description: "Delete a block in Notion",
-  inputSchema: {
-    type: "object",
-    properties: {
-      block_id: {
-        type: "string",
-        description: "The ID of the block to delete." + commonIdDescription,
-      },
-      format: formatParameter,
-    },
-    required: ["block_id"],
-  },
-};
 
-const updateBlockTool: Tool = {
-  name: "notion_update_block",
-  description: "Update the content of a block in Notion based on its type. The update replaces the entire value for a given field.",
-  inputSchema: {
-    type: "object",
-    properties: {
-      block_id: {
-        type: "string",
-        description: "The ID of the block to update." + commonIdDescription,
-      },
-      block: {
-        type: "object",
-        description: "The updated content for the block. Must match the block's type schema.",
-      },
-      format: formatParameter,
-    },
-    required: ["block_id", "block"],
-  },
-};
+
+
 
 // Pages
 const retrievePageTool: Tool = {
@@ -574,28 +515,8 @@ const retrievePageTool: Tool = {
   },
 };
 
-const updatePagePropertiesTool: Tool = {
-  name: "notion_update_page_properties",
-  description: "Update properties of a page or an item in a Notion database",
-  inputSchema: {
-    type: "object",
-    properties: {
-      page_id: {
-        type: "string",
-        description:
-          "The ID of the page or database item to update." +
-          commonIdDescription,
-      },
-      properties: {
-        type: "object",
-        description:
-          "Properties to update. These correspond to the columns or fields in the database.",
-      },
-      format: formatParameter,
-    },
-    required: ["page_id", "properties"],
-  },
-};
+
+        
 
 // Users
 const listAllUsersTool: Tool = {
@@ -653,32 +574,8 @@ const retrieveBotUserTool: Tool = {
 };
 
 // Databases
-const createDatabaseTool: Tool = {
-  name: "notion_create_database",
-  description: "Create a database in Notion",
-  inputSchema: {
-    type: "object",
-    properties: {
-      parent: {
-        type: "object",
-        description: "Parent object of the database",
-      },
-      title: {
-        type: "array",
-        description:
-          "Title of database as it appears in Notion. An array of rich text objects.",
-        items: richTextObjectSchema,
-      },
-      properties: {
-        type: "object",
-        description:
-          "Property schema of database. The keys are the names of properties as they appear in Notion and the values are property schema objects.",
-      },
-      format: formatParameter,
-    },
-    required: ["parent", "properties"],
-  },
-};
+
+        
 
 const queryDatabaseTool: Tool = {
   name: "notion_query_database",
@@ -729,97 +626,29 @@ const retrieveDatabaseTool: Tool = {
   },
 };
 
-const updateDatabaseTool: Tool = {
-  name: "notion_update_database",
-  description: "Update a database in Notion",
-  inputSchema: {
-    type: "object",
-    properties: {
-      database_id: {
-        type: "string",
-        description: "The ID of the database to update." + commonIdDescription,
-      },
-      title: {
-        type: "array",
-        description:
-          "An array of rich text objects that represents the title of the database that is displayed in the Notion UI.",
-        items: richTextObjectSchema,
-      },
-      description: {
-        type: "array",
-        description:
-          "An array of rich text objects that represents the description of the database that is displayed in the Notion UI.",
-      },
-      properties: {
-        type: "object",
-        description:
-          "The properties of a database to be changed in the request, in the form of a JSON object.",
-      },
+
+        
+      
+      
       format: formatParameter,
     },
     required: ["database_id"],
   },
 };
 
-const createDatabaseItemTool: Tool = {
-  name: "notion_create_database_item",
-  description: "Create a new item (page) in a Notion database",
-  inputSchema: {
-    type: "object",
-    properties: {
-      database_id: {
-        type: "string",
-        description:
-          "The ID of the database to add the item to." + commonIdDescription,
-      },
-      properties: {
-        type: "object",
-        description:
-          "Properties of the new database item. These should match the database schema.",
-      },
-      format: formatParameter,
-    },
-    required: ["database_id", "properties"],
-  },
-};
+
+        
 
 // Comments
-const createCommentTool: Tool = {
-  name: "notion_create_comment",
-  description:
-    "Create a comment in Notion. This requires the integration to have 'insert comment' capabilities. You can either specify a page parent or a discussion_id, but not both.",
-  inputSchema: {
-    type: "object",
-    properties: {
-      parent: {
-        type: "object",
-        description:
-          "Parent object that specifies the page to comment on. Must include a page_id if used.",
-        properties: {
-          page_id: {
+
             type: "string",
             description:
               "The ID of the page to comment on." + commonIdDescription,
           },
         },
       },
-      discussion_id: {
-        type: "string",
-        description:
-          "The ID of an existing discussion thread to add a comment to." +
-          commonIdDescription,
-      },
-      rich_text: {
-        type: "array",
-        description:
-          "Array of rich text objects representing the comment content.",
-        items: richTextObjectSchema,
-      },
-      format: formatParameter,
-    },
-    required: ["rich_text"],
-  },
-};
+      
+      
 
 const retrieveCommentsTool: Tool = {
   name: "notion_retrieve_comments",
@@ -1494,22 +1323,22 @@ async function main() {
   server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
       tools: [
-        appendBlockChildrenTool,
+        
         retrieveBlockTool,
         retrieveBlockChildrenTool,
-        deleteBlockTool,
-        updateBlockTool,
+        
+        
         retrievePageTool,
-        updatePagePropertiesTool,
+        
         listAllUsersTool,
         retrieveUserTool,
         retrieveBotUserTool,
-        createDatabaseTool,
+        
         queryDatabaseTool,
         retrieveDatabaseTool,
-        updateDatabaseTool,
-        createDatabaseItemTool,
-        createCommentTool,
+        
+        
+        
         retrieveCommentsTool,
         searchTool,
       ],
