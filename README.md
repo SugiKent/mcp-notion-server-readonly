@@ -1,6 +1,6 @@
-# Notion MCP Server
+# Notion MCP Server (Read-only Version)
 
-MCP Server for the Notion API, enabling Claude to interact with Notion workspaces.
+MCP Server for the Notion API, enabling Claude to read content from Notion workspaces. This is a read-only version that only supports retrieval operations.
 
 ## Setup
 
@@ -13,7 +13,7 @@ Here is a detailed explanation of the steps mentioned above in the following art
 
    - Visit the [Notion Your Integrations page](https://www.notion.so/profile/integrations).
    - Click "New Integration".
-   - Name your integration and select appropriate permissions (e.g., "Read content", "Update content").
+   - Name your integration and select "Read content" permissions only (this is a read-only version).
 
 2. **Retrieve the Secret Key**:
 
@@ -113,32 +113,25 @@ You can control the format on a per-request basis by setting the `format` parame
 
 If you encounter permission errors:
 
-1. Ensure the integration has the required permissions.
-2. Verify that the integration is invited to the relevant pages or databases.
-3. Confirm the token and configuration are correctly set in `claude_desktop_config.json`.
+1. Ensure the integration has "Read content" permissions (this is a read-only version)
+2. Verify that the integration is invited to the relevant pages or databases
+3. Confirm the token and configuration are correctly set in `claude_desktop_config.json`
+4. Note: Write operations will not work as this is a read-only version
 
-## Tools
+## Available Read-only Tools
 
-All tools support the following optional parameter:
+This version only supports read-only operations. All tools support the following optional parameter:
 
-- `format` (string, "json" or "markdown", default: "markdown"): Controls the response format. Use "markdown" for human-readable output, "json" for programmatic access to the original data structure. Note: Markdown conversion only works when the `NOTION_MARKDOWN_CONVERSION` environment variable is set to "true".
+- `format` (string, "json" or "markdown", default: "markdown"): Controls the response format. Use "markdown" for human-readable output, "json" for programmatic access to the original data structure.
 
-1. `notion_append_block_children`
-
-   - Append child blocks to a parent block.
-   - Required inputs:
-     - `block_id` (string): The ID of the parent block.
-     - `children` (array): Array of block objects to append.
-   - Returns: Information about the appended blocks.
-
-2. `notion_retrieve_block`
+1. `notion_retrieve_block`
 
    - Retrieve information about a specific block.
    - Required inputs:
      - `block_id` (string): The ID of the block to retrieve.
    - Returns: Detailed information about the block.
 
-3. `notion_retrieve_block_children`
+2. `notion_retrieve_block_children`
 
    - Retrieve the children of a specific block.
    - Required inputs:
@@ -148,38 +141,14 @@ All tools support the following optional parameter:
      - `page_size` (number, default: 100, max: 100): Number of blocks to retrieve.
    - Returns: List of child blocks.
 
-4. `notion_delete_block`
-
-   - Delete a specific block.
-   - Required inputs:
-     - `block_id` (string): The ID of the block to delete.
-   - Returns: Confirmation of the deletion.
-
-5. `notion_retrieve_page`
+3. `notion_retrieve_page`
 
    - Retrieve information about a specific page.
    - Required inputs:
      - `page_id` (string): The ID of the page to retrieve.
    - Returns: Detailed information about the page.
 
-6. `notion_update_page_properties`
-
-   - Update properties of a page.
-   - Required inputs:
-     - `page_id` (string): The ID of the page to update.
-     - `properties` (object): Properties to update.
-   - Returns: Information about the updated page.
-
-7. `notion_create_database`
-
-   - Create a new database.
-   - Required inputs:
-     - `parent` (object): Parent object of the database.
-     - `title` (array): Title of the database as a rich text array.
-     - `properties` (object): Property schema of the database.
-   - Returns: Information about the created database.
-
-8. `notion_query_database`
+4. `notion_query_database`
 
    - Query a database.
    - Required inputs:
@@ -191,78 +160,47 @@ All tools support the following optional parameter:
      - `page_size` (number, default: 100, max: 100): Number of results to retrieve.
    - Returns: List of results from the query.
 
-9. `notion_retrieve_database`
+5. `notion_retrieve_database`
 
    - Retrieve information about a specific database.
    - Required inputs:
      - `database_id` (string): The ID of the database to retrieve.
    - Returns: Detailed information about the database.
 
-10. `notion_update_database`
+6. `notion_search`
 
-    - Update information about a database.
-    - Required inputs:
-      - `database_id` (string): The ID of the database to update.
-    - Optional inputs:
-      - `title` (array): New title for the database.
-      - `description` (array): New description for the database.
-      - `properties` (object): Updated property schema.
-    - Returns: Information about the updated database.
+   - Search pages or databases by title.
+   - Optional inputs:
+     - `query` (string): Text to search for in page or database titles.
+     - `filter` (object): Criteria to limit results to either only pages or only databases.
+     - `sort` (object): Criteria to sort the results
+     - `start_cursor` (string): Pagination start cursor.
+     - `page_size` (number, default: 100, max: 100): Number of results to retrieve.
+   - Returns: List of matching pages or databases.
 
-11. `notion_create_database_item`
+7. `notion_list_all_users`
 
-    - Create a new item in a Notion database.
-    - Required inputs:
-      - `database_id` (string): The ID of the database to add the item to.
-      - `properties` (object): The properties of the new item. These should match the database schema.
-    - Returns: Information about the newly created item.
+   - List all users in the Notion workspace.
+   - Note: This function requires upgrading to the Notion Enterprise plan and using an Organization API key to avoid permission errors.
+   - Optional inputs:
+     - start_cursor (string): Pagination start cursor for listing users.
+     - page_size (number, max: 100): Number of users to retrieve.
+   - Returns: A paginated list of all users in the workspace.
 
-12. `notion_search`
+8. `notion_retrieve_user`
 
-    - Search pages or databases by title.
-    - Optional inputs:
-      - `query` (string): Text to search for in page or database titles.
-      - `filter` (object): Criteria to limit results to either only pages or only databases.
-      - `sort` (object): Criteria to sort the results
-      - `start_cursor` (string): Pagination start cursor.
-      - `page_size` (number, default: 100, max: 100): Number of results to retrieve.
-    - Returns: List of matching pages or databases.
+   - Retrieve a specific user by user_id in Notion.
+   - Note: This function requires upgrading to the Notion Enterprise plan and using an Organization API key to avoid permission errors.
+   - Required inputs:
+     - user_id (string): The ID of the user to retrieve.
+   - Returns: Detailed information about the specified user.
 
-13. `notion_list_all_users`
+9. `notion_retrieve_bot_user`
 
-    - List all users in the Notion workspace.
-    - Note: This function requires upgrading to the Notion Enterprise plan and using an Organization API key to avoid permission errors.
-    - Optional inputs:
-      - start_cursor (string): Pagination start cursor for listing users.
-      - page_size (number, max: 100): Number of users to retrieve.
-    - Returns: A paginated list of all users in the workspace.
+   - Retrieve the bot user associated with the current token in Notion.
+   - Returns: Information about the bot user, including details of the person who authorized the integration.
 
-14. `notion_retrieve_user`
-
-    - Retrieve a specific user by user_id in Notion.
-    - Note: This function requires upgrading to the Notion Enterprise plan and using an Organization API key to avoid permission errors.
-    - Required inputs:
-      - user_id (string): The ID of the user to retrieve.
-    - Returns: Detailed information about the specified user.
-
-15. `notion_retrieve_bot_user`
-
-    - Retrieve the bot user associated with the current token in Notion.
-    - Returns: Information about the bot user, including details of the person who authorized the integration.
-
-16. `notion_create_comment`
-
-    - Create a comment in Notion.
-    - Requires the integration to have 'insert comment' capabilities.
-    - Either specify a `parent` object with a `page_id` or a `discussion_id`, but not both.
-    - Required inputs:
-      - `rich_text` (array): Array of rich text objects representing the comment content.
-    - Optional inputs:
-      - `parent` (object): Must include `page_id` if used.
-      - `discussion_id` (string): An existing discussion thread ID.
-    - Returns: Information about the created comment.
-
-17. `notion_retrieve_comments`
+10. `notion_retrieve_comments`
     - Retrieve a list of unresolved comments from a Notion page or block.
     - Requires the integration to have 'read comment' capabilities.
     - Required inputs:
