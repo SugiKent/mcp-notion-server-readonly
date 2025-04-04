@@ -9,11 +9,19 @@ vi.mock("./markdown/index.js", () => ({
 
 // Mock tool list
 const mockTools = [
-  { name: "notion_retrieve_block" },
-  { name: "notion_retrieve_page" },
-  { name: "notion_query_database" },
+    {
+        name: "notion_retrieve_block",
+        inputSchema: { type: "object" as const }
+    },
+    {
+        name: "notion_retrieve_page",
+        inputSchema: { type: "object" as const }
+    },
+    {
+        name: "notion_query_database",
+        inputSchema: { type: "object" as const }
+    }
 ];
-
 global.fetch = vi.fn();
 
 describe("NotionClientWrapper", () => {
